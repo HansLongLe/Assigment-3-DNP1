@@ -1,0 +1,123 @@
+@page "/"
+@using System.Collections.ObjectModel
+@using System.Globalization
+@using Client.Data
+@using Client.Models
+@inject IAdultsService _adultsService;
+
+
+
+<!--suppress JSUnresolvedLibraryURL -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<h1>Adult list</h1>
+
+Here you can view information of every registered adults.
+
+
+<div>
+    <div class="search-container">
+       
+        
+            <input type = "text" placeholder="Search.."  @bind="SearchedText"/>
+            <button type= "submit" @onclick="Search"><i class="fa fa-search"></i></button>
+
+
+
+
+    </div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>First name</th>
+            <th>Last Name</th>
+            <th>Hair color</th>
+            <th>Eye color</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Sex</th>
+            <th>Job title</th>
+            <th>Salary</th>
+        </tr>
+        
+        @if (_visible)
+{
+    if (_allAdults.Count != 0)
+    {
+        @foreach (var adult in _allAdults)
+        {
+            <tr>
+                <td>@adult.Id</td>
+                <td>@adult.FirstName</td>
+                <td>@adult.LastName</td>
+                <td>@adult.HairColor</td>
+                <td>@adult.EyeColor</td>
+                <td>@adult.Age</td>
+                <td>@adult.Weight</td>
+                <td>@adult.Height</td>
+                <td>@adult.Sex</td>
+                <td>@adult.JobTitle.JobTitle</td>
+                <td>@adult.JobTitle.Salary</td>
+            </tr>
+        }
+    }
+}
+@if (_visible == false)
+{
+    if (_allAdults.Count != 0)
+    {
+        @foreach (var adult in _allAdults)
+    {
+        if (adult.FirstName.Contains(SearchedText) || adult.LastName.Contains(SearchedText) || adult.HairColor.Contains(SearchedText)
+            ||adult.EyeColor.Contains(SearchedText) || adult.Age.ToString().Contains(SearchedText) ||adult.Weight.ToString(CultureInfo.InvariantCulture).Contains(SearchedText) 
+        || adult.Height.ToString().Contains(SearchedText) || adult.Sex.Contains(SearchedText) || adult.JobTitle.JobTitle.Contains(SearchedText)
+        || adult.JobTitle.Salary.ToString().Contains(SearchedText))
+        {
+            <tr>
+                <td>@adult.Id</td>
+                <td>@adult.FirstName</td>
+                <td>@adult.LastName</td>
+                <td>@adult.HairColor</td>
+                <td>@adult.EyeColor</td>
+                <td>@adult.Age</td>
+                <td>@adult.Weight</td>
+                <td>@adult.Height</td>
+                <td>@adult.Sex</td>
+                <td>@adult.JobTitle.JobTitle</td>
+                <td>@adult.JobTitle.Salary</td>
+
+            </tr>
+        }
+    }
+    }
+}
+
+
+    </table>
+</div>
+
+@code
+{
+    private string SearchedText {get; set; }
+    private bool _visible = true;
+    private IList<Adult> _allAdults = new Collection<Adult>();
+
+    private void Search()
+    {
+        _visible = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _allAdults = await _adultsService.GetAdultsAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+}

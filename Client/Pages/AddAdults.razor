@@ -1,0 +1,41 @@
+@page "/addAdults"
+@using Models
+@using Client.Data
+@inject IValidator _validator;
+
+
+@if(_validator.GetAuthorization())
+{
+    @if (!_buttonPressed)
+        {
+            <h1>Add adult</h1>
+            <p>Here you can add new adults.</p>
+            <button @onclick="AddButtonPressed">Add</button>
+        }
+
+    @if (_buttonPressed)
+    {
+        <AddInformationAboutAdult/>   
+    }
+}
+
+
+@if (!_validator.GetAuthorization())
+{
+    <h1>You must first login to add Adults.</h1>
+}
+
+
+
+
+
+
+@code {
+    private bool _buttonPressed = false;
+
+    private void AddButtonPressed()
+    {
+        _buttonPressed = true;
+    }
+
+}

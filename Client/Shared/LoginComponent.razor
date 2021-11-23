@@ -1,0 +1,49 @@
+﻿@page "/login"
+@using Models
+@using Client.Data
+@inject IUserService _userService;
+@inject IValidator _validator
+@inject NavigationManager _navigationManager;
+
+@if (!_validator.GetAuthorization())
+{
+    <div> Username <input type="text" @bind="_username" @onkeyup="@Enter"> Password <input type="text" @bind="_password" @onkeyup="@Enter"> <button @onclick="Login">Login</button> </div>
+}
+@if (_validator.GetAuthorization())
+{
+    <button @onclick="Logout">Logout</button>
+}
+
+
+@code
+    {
+        private string _username;
+        private string _password;
+        private bool _authorized;
+        
+
+        private async Task Login()
+        {
+            var user = new User
+            {
+                UserName = _username,
+                Password = _password
+            };
+            
+            _validator.Set(await _userService.GetResult(user));
+            _navigationManager.NavigateTo("");
+        }
+
+    private void Logout()
+    {
+        _validator.Set(false);
+    }
+
+    private async Task Enter(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+        {
+            await Login();
+        }
+    }
+    }

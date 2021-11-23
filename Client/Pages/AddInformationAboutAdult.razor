@@ -1,0 +1,98 @@
+﻿@using Models
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
+@using System.Linq
+@using Client.Data
+@inject IAdultsService _adultsService
+
+@if (!_buttonPressed)
+{
+    <h1>Add adult</h1>
+    <h3><b>Adult information</b></h3>
+    <li style="list-style: none">
+        <ul><input type="text" placeholder="First name.." @bind="_firstName">First name</ul>
+        <ul><input type="text" placeholder="Last name.." @bind="_lastName">Last name</ul>
+        <ul><input type="text" placeholder="Hair color.." @bind="_hairColor">Hair color</ul>
+        <ul><input type="text" placeholder="Eye color.." @bind="_eyeColor">Eye color</ul>
+        <ul><input type="number" placeholder="Age.." @bind="_age">Age</ul>
+        <ul><input type="number" placeholder="Weight.." @bind="_weight">Weight</ul>
+        <ul><input type="number" placeholder="Height.." @bind="_height">Height</ul>
+        <ul><input type="text" placeholder="Sex.." @bind="_sex">Sex</ul>
+        <ul><input type="text" placeholder="Job title.." @bind="_jobTitle">Job title</ul>
+        <ul><input type="number" placeholder="Salary.." @bind="_salary">Salary</ul>
+    </li>
+    <button @onclick="AddButtonPressed">Add</button>
+}
+
+@if (_buttonPressed)
+{
+    <AddAdults/>  
+}
+
+@code {
+    private bool _buttonPressed = false;
+
+    [Required]
+    [NotNull]
+    private string _firstName;
+    
+    [Required]
+    [NotNull]
+    private string _lastName;
+    
+    [Required]
+    [NotNull]
+    private string _hairColor;
+    
+    [Required]
+    [NotNull]
+    private string _eyeColor;
+    
+    [Required]
+    [Range(18, int.MaxValue)]
+    private int _age;
+    
+    [Required]
+    [Range(0, int.MaxValue)]
+    private int _weight;
+    
+    [Required]
+    [Range(0, int.MaxValue)]
+    private int _height;
+    
+    [Required]
+    [NotNull]
+    private string _sex;
+    
+    [Required]
+    [NotNull]
+    private string _jobTitle;
+    
+    [Required]
+    [Range(0, int.MaxValue)]
+    private int _salary;
+
+
+    private async void AddButtonPressed()
+    {
+        _buttonPressed = true;
+        var adult = new Adult
+        {
+            FirstName = _firstName,
+            LastName = _lastName,
+            HairColor = _hairColor,
+            EyeColor = _eyeColor,
+            Age = _age,
+            Weight = _weight,
+            Height = _height,
+            Sex = _sex,
+            JobTitle = new Job
+            {
+                JobTitle = _jobTitle,
+                Salary = _salary
+            }
+        };
+
+        await _adultsService.AddAdultAsync(adult);
+    }
+}
